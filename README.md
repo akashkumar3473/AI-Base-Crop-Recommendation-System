@@ -1,12 +1,61 @@
-# React + Vite
+# 🌾 Crop Recommendation System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 🚀 AI-Powered Smart Farming Solution
 
-Currently, two official plugins are available:
+This project is a Machine Learning based web application that recommends the most suitable crop based on soil nutrients and environmental conditions.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## 📌 Overview
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+The Crop Recommendation System helps farmers and agriculture professionals choose the best crop using data such as Nitrogen, Phosphorus, Potassium, Temperature, Humidity, pH, and Rainfall.
+
+It provides fast, simple, and data-driven crop suggestions to support smart farming decisions.
+
+---
+
+## ✨ Features
+
+- Predicts the best crop using Machine Learning
+- Takes soil and weather parameters as input
+- Provides real-time crop recommendation
+- Simple and user-friendly interface
+- Useful for agriculture decision-making
+
+---
+
+## 📈 Architecture Flow
+<img width="1536" height="1024" alt="crop" src="https://github.com/user-attachments/assets/e7b5310c-6422-4000-bc3f-a03328052c68" />
+
+
+---
+
+## 🛠️ Tech Stack
+
+- Frontend: HTML, React.js
+- Backend: Python, Flask
+- Machine Learning: Scikit-learn
+- Libraries: Pandas, NumPy
+- Model File: Pickle
+
+---
+
+## 📊 Input Parameters
+
+- Nitrogen
+- Phosphorus
+- Potassium
+- Temperature
+- Humidity
+- pH
+- Rainfall
+
+---
+
+## ⚙️ Installation
+
+```bash
+git clone https://github.com/akashkumar3473/https---github.com-akashkumar3473-Crop-recommendation1.git
+cd Crop-recommendation1
+pip install -r requirements.txt
+python app.py
