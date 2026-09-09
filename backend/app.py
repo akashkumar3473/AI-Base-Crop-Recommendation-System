@@ -5,8 +5,12 @@ import hashlib
 import jwt
 import os
 import subprocess
-from ml_service import ml_service
-from fertilizer_data import fertilizer_dictionary
+try:
+    from .ml_service import ml_service
+    from .fertilizer_data import fertilizer_dictionary
+except ImportError:
+    from ml_service import ml_service
+    from fertilizer_data import fertilizer_dictionary
 
 # Initialize Flask app and enable CORS
 FRONTEND_DIST = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'frontend', 'dist'))
