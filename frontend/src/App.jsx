@@ -73,7 +73,9 @@ function App() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch('/api/dashboard-data');
+                const response = await fetch(
+             `${import.meta.env.VITE_API_URL}/api/dashboard-data`
+            );
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -133,7 +135,7 @@ function App() {
         if (season === 'kharif') { seasonalRainfall = monthlyAverages[5] + monthlyAverages[6] + monthlyAverages[7] + monthlyAverages[8]; } else if (season === 'rabi') { seasonalRainfall = monthlyAverages[9] + monthlyAverages[10] + monthlyAverages[11] + monthlyAverages[0] + monthlyAverages[1]; } else { seasonalRainfall = monthlyAverages[2] + monthlyAverages[3] + monthlyAverages[4]; }
         const payload = { 'Crop_Type': season, 'N': sensorData.nitrogen, 'P': sensorData.phosphorus, 'K': sensorData.potassium, 'pH': sensorData.ph, 'rainfall': seasonalRainfall, 'temperature': sensorData.temperature, 'Area_in_hectares': 1 };
         try {
-            const response = await fetch('/predict', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), });
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/predict`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), });
             if (!response.ok) { const errorData = await response.json(); throw new Error(errorData.error || `Server responded with status: ${response.status}`); }
             const result = await response.json();
             setRecommendations(result);
