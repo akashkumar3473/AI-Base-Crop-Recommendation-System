@@ -1,4 +1,4 @@
-```jsx
+
 import axios from "axios";
 import { Circles } from "react-loader-spinner";
 import React, { useState } from "react";
@@ -90,11 +90,7 @@ const CropRecommendation = () => {
     try {
       setLoading(true);
 
-      const API_URL = import.meta.env.VITE_API_URL;
-
-      if (!API_URL) {
-        throw new Error("VITE_API_URL is not configured.");
-      }
+      const API_URL = import.meta.env.VITE_API_URL || "";
 
       const response = await fetch(`${API_URL}/predict`, {
         method: "POST",
@@ -365,4 +361,4 @@ const CropRecommendation = () => {
 };
 
 export default CropRecommendation;
-```
+
