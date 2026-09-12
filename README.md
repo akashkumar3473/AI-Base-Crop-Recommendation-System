@@ -1,4 +1,4 @@
-# 🌾 Crop Recommendation System 🚀 **[Live Link](https://ai-base-crop-recommendation-system-swart.vercel.app/)**
+# 🌱 Crop Recommendation System — [Live Demo](https://ai-base-crop-recommendation-system-swart.vercel.app/)
 
 
 ## 🚀 AI-Powered Smart Farming Solution
