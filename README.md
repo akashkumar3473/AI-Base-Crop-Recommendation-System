@@ -10,6 +10,11 @@ The platform analyzes soil nutrients, environmental conditions, crop seasons, an
 
 ---
 
+## 🏗️ System Architecture
+
+<img width="1536" height="1024" alt="ChatGPT Image Sep 21, 2026, 10_59_33 PM" src="https://github.com/user-attachments/assets/49792fbf-7794-4365-8524-b23867725d9c" />
+
+
 ## ✨ Key Features
 
 ### 🌱 1. ML-Based Crop Recommendation
