@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
+import { FiArrowRight, FiFacebook, FiInstagram, FiMail, FiMapPin, FiPhone, FiTwitter, FiYoutube } from 'react-icons/fi';
 
 // Main Notification Page Component
-const BhoomiSenseNotificationPage = () => {
+const BhoomiSenseNotificationPage = ({
+  notifications: sharedNotifications,
+  onMarkAsRead: onSharedMarkAsRead,
+  onMarkAllAsRead: onSharedMarkAllAsRead
+}) => {
   // Notifications state
   const initialNotifications = [
     {
@@ -82,7 +87,21 @@ const BhoomiSenseNotificationPage = () => {
         details: "The main water storage tank level has dropped to 15%, which is below the critical threshold of 20%. <br/><br/><b>Action Required:</b> Please initiate the water pump to refill the tank immediately to ensure the next irrigation cycle is not disrupted."
     }
   ];
-  const [notifications, setNotifications] = useState(initialNotifications);
+  const [localNotifications, setLocalNotifications] = useState(initialNotifications);
+  const usesSharedNotifications = Array.isArray(sharedNotifications);
+  const notifications = usesSharedNotifications
+    ? sharedNotifications.map(notification => ({
+        id: notification.id,
+        type: notification.type || notification.title || 'Notification',
+        summary: notification.summary || notification.message || 'No additional information available.',
+        time: notification.time || notification.timestamp || '',
+        icon: notification.icon || <SystemUpdateIcon />,
+        iconBg: notification.iconBg || 'bg-emerald-100',
+        isRead: notification.isRead ?? notification.read ?? false,
+        title: notification.title || notification.type || 'Notification',
+        details: notification.details || notification.message || notification.summary || 'No additional information available.'
+      }))
+    : localNotifications;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState({ title: '', details: '' });
@@ -99,10 +118,18 @@ const BhoomiSenseNotificationPage = () => {
   };
   const handleCloseModal = () => setIsModalOpen(false);
   const handleMarkAsRead = (id) => {
-    setNotifications(prev => prev.map(n => (n.id === id ? { ...n, isRead: true } : n)));
+    if (usesSharedNotifications) {
+      onSharedMarkAsRead?.(id);
+      return;
+    }
+    setLocalNotifications(prev => prev.map(n => (n.id === id ? { ...n, isRead: true } : n)));
   };
   const handleMarkAllAsRead = () => {
-    setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+    if (usesSharedNotifications) {
+      onSharedMarkAllAsRead?.();
+      return;
+    }
+    setLocalNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
   };
 
   return (
@@ -147,55 +174,56 @@ const BhoomiSenseNotificationPage = () => {
             --earth-brown: #BC6C25;
             --primary-text: #4A403A;
         }
-        .site-footer {
-            background-color: var(--dark-green);
-            color: var(--light-cream);
-            padding: 60px 0 0 0;
-            font-size: 15px;
-            line-height: 24px;
-            font-family: 'Poppins', sans-serif;
-        }
-        .footer-container {
-            max-width: 1200px; margin: 0 auto; padding: 0 20px;
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px;
-        }
-        .footer-about h3 { font-size: 24px; font-weight: 700; margin-bottom: 20px; letter-spacing: 1px; color: #fff; }
-        .footer-about p { margin: 0; opacity: 0.8; }
-        .footer-links h4, .footer-contact h4, .footer-subscribe h4 { font-size: 18px; font-weight: 600; margin-bottom: 25px; position: relative; color: #fff; }
-        .footer-links h4::after, .footer-contact h4::after, .footer-subscribe h4::after { content: ''; position: absolute; left: 0; bottom: -8px; width: 50px; height: 3px; background-color: var(--earth-brown); border-radius: 2px; }
-        .footer-links ul { list-style: none; padding: 0; margin: 0; }
-        .footer-links li a { color: var(--light-cream); text-decoration: none; opacity: 0.8; display: block; margin-bottom: 12px; transition: all 0.3s ease; }
-        .footer-links li a:hover { opacity: 1; color: #fff; transform: translateX(5px); }
-        .footer-links li a::before { content: '\\f105'; font-family: 'Font Awesome 6 Free'; font-weight: 900; margin-right: 10px; color: var(--earth-brown); }
-        .footer-contact p { margin-bottom: 15px; opacity: 0.8; display: flex; align-items: center; }
-        .footer-contact i { margin-right: 15px; color: var(--earth-brown); font-size: 18px; width: 20px; text-align: center; }
-        .newsletter-form { display: flex; margin-top: 10px; }
-        .newsletter-form input { flex-grow: 1; padding: 12px; border: none; border-radius: 5px 0 0 5px; font-family: 'Poppins', sans-serif; background-color: var(--olive-green); color: #fff; }
-        .newsletter-form input::placeholder { color: rgba(255, 255, 255, 0.6); }
-        .newsletter-form input:focus { outline: none; box-shadow: 0 0 0 2px var(--earth-brown); }
-        .newsletter-form button { padding: 12px 20px; border: none; background-color: var(--earth-brown); color: #fff; font-weight: 600; cursor: pointer; border-radius: 0 5px 5px 0; transition: background-color 0.3s ease; }
-        .newsletter-form button:hover { background-color: #d9802c; }
-        .social-icons { margin-top: 25px; display: flex; gap: 15px; }
-        .social-icons a { color: var(--dark-green); background-color: var(--light-cream); width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; text-decoration: none; font-size: 18px; transition: all 0.3s ease; }
-        .social-icons a:hover { transform: translateY(-5px); background-color: var(--earth-brown); color: #fff; }
-        .footer-bottom-bar { margin-top: 60px; padding: 20px 0; text-align: center; background-color: rgba(0, 0, 0, 0.2); }
-        .copyright-text { margin: 0; opacity: 0.7; }
+        .site-footer { background: #203516; color: #f7f1d5; font-size: 15px; line-height: 1.6; }
+        .footer-container { max-width: 1280px; margin: 0 auto; padding: 56px 32px 48px; display: grid; grid-template-columns: 1.25fr 0.8fr 1fr 1.2fr; gap: 56px; }
+        .footer-about h3 { font-size: 25px; font-weight: 800; margin: 0 0 16px; letter-spacing: .08em; color: #fff; }
+        .footer-about p { max-width: 290px; margin: 0; color: rgba(247, 241, 213, .75); }
+        .footer-links h4, .footer-contact h4, .footer-subscribe h4 { font-size: 18px; font-weight: 700; margin: 0 0 24px; position: relative; color: #fff; }
+        .footer-links h4::after, .footer-contact h4::after, .footer-subscribe h4::after { content: ''; position: absolute; left: 0; bottom: -9px; width: 42px; height: 3px; background: #d1842b; border-radius: 2px; }
+        .footer-links ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 11px; }
+        .footer-links li a { color: rgba(247, 241, 213, .78); text-decoration: none; display: inline-flex; align-items: center; gap: 9px; transition: color .2s ease, transform .2s ease; }
+        .footer-links li a:hover { color: #fff; transform: translateX(3px); }
+        .footer-contact p { margin: 0 0 14px; color: rgba(247, 241, 213, .78); display: flex; align-items: center; gap: 12px; }
+        .footer-contact svg { flex: 0 0 auto; color: #d1842b; }
+        .newsletter-form { display: flex; margin-top: 12px; }
+        .newsletter-form input { min-width: 0; flex: 1; padding: 12px 14px; border: 1px solid rgba(247, 241, 213, .12); border-radius: 7px 0 0 7px; background: #526637; color: #fff; }
+        .newsletter-form input::placeholder { color: rgba(255, 255, 255, .65); }
+        .newsletter-form input:focus { outline: 2px solid #d1842b; outline-offset: -2px; }
+        .newsletter-form button { padding: 12px 17px; border: 0; background: #d1842b; color: #fff; font-weight: 700; cursor: pointer; border-radius: 0 7px 7px 0; transition: background .2s ease; }
+        .newsletter-form button:hover { background: #b86d20; }
+        .social-icons { margin-top: 22px; display: flex; gap: 10px; }
+        .social-icons a { color: #203516; background: #f7f1d5; width: 36px; height: 36px; border-radius: 50%; display: inline-flex; justify-content: center; align-items: center; text-decoration: none; transition: transform .2s ease, background .2s ease; }
+        .social-icons a:hover { transform: translateY(-3px); background: #d1842b; color: #fff; }
+        .footer-bottom-bar { padding: 18px 32px; text-align: center; background: rgba(0, 0, 0, .16); }
+        .copyright-text { margin: 0; color: rgba(247, 241, 213, .65); font-size: 13px; }
         @media (max-width: 768px) {
-            .site-footer { text-align: center; }
+          .footer-container { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 36px 24px; padding: 42px 24px; }
+          .footer-about p { max-width: none; }
             .footer-links h4::after, .footer-contact h4::after, .footer-subscribe h4::after { left: 50%; transform: translateX(-50%); }
-            .footer-contact p { justify-content: center; }
-            .social-icons { justify-content: center; }
+          .footer-about, .footer-subscribe { text-align: center; }
+          .footer-contact p { align-items: flex-start; }
+          .social-icons { justify-content: center; }
+        }
+        @media (max-width: 520px) {
+          .footer-container { grid-template-columns: 1fr; text-align: center; }
+          .footer-contact p { justify-content: center; }
+          .newsletter-form { max-width: 360px; margin-left: auto; margin-right: auto; }
         }
       `}</style>
 
       {/* Main Content */}
-      <div className="container mx-auto p-4 sm:p-6 md:p-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full max-w-7xl mx-auto">
+      <div className="container mx-auto px-4 pb-12 sm:px-6 md:px-8">
+        <div className="grid w-full max-w-7xl mx-auto grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-8">
           {/* Notifications Column */}
-          <div className="lg:col-span-2 bg-white rounded-xl shadow-md p-6 sm:p-8">
+          <div className="lg:col-span-2 rounded-2xl bg-white/95 p-5 shadow-lg ring-1 ring-black/5 sm:p-8">
             <header className="flex flex-col sm:flex-row justify-between sm:items-center border-b pb-4 mb-6">
-              <h1 className="text-3xl font-bold text-gray-800">Recent Notifications</h1>
-              <button onClick={handleMarkAllAsRead} disabled={unreadCount === 0} className="mt-4 sm:mt-0 bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+              <div>
+                <p className="mb-1 text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">BhoomiSense updates</p>
+                <h1 className="text-3xl font-bold text-gray-800">Notifications</h1>
+                <p className="mt-1 text-sm text-gray-500">Stay informed about your farm and smart sensors.</p>
+              </div>
+              <button onClick={handleMarkAllAsRead} disabled={unreadCount === 0} className="mt-4 inline-flex items-center justify-center gap-2 rounded-lg bg-gray-100 px-4 py-2 font-semibold text-gray-700 transition-colors duration-200 hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50 sm:mt-0">
+                <span aria-hidden="true">✓</span>
                 Mark All as Read
               </button>
             </header>
@@ -220,7 +248,7 @@ const BhoomiSenseNotificationPage = () => {
 
           {/* Settings & Summary Column */}
           <div className="space-y-8">
-            <div className="bg-white rounded-xl shadow-md p-6 sm:p-8">
+            <div className="rounded-2xl bg-white/95 p-6 shadow-lg ring-1 ring-black/5 sm:p-8">
               <h2 className="text-xl font-semibold text-gray-700 mb-6">Notification Settings</h2>
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
@@ -238,7 +266,7 @@ const BhoomiSenseNotificationPage = () => {
                 <button className="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700 transition-colors duration-200">Save Settings</button>
               </div>
             </div>
-            <div className="bg-white rounded-xl shadow-md p-6 sm:p-8">
+            <div className="rounded-2xl bg-white/95 p-6 shadow-lg ring-1 ring-black/5 sm:p-8">
               <h2 className="text-xl font-semibold text-gray-700 mb-6">Notification Summary</h2>
               <div className="space-y-4">
                 <div className="flex justify-between items-center text-gray-600">
@@ -268,20 +296,20 @@ const BhoomiSenseNotificationPage = () => {
 // --- SUB-COMPONENTS ---
 const NotificationCard = ({ notification, onMarkAsRead, onViewDetails }) => {
   const isUnread = !notification.isRead;
-  const cardClasses = `notification-card p-4 rounded-lg flex items-center justify-between cursor-pointer transition-all duration-300 ${isUnread ? 'unread' : ''}`;
+  const cardClasses = `notification-card flex cursor-pointer flex-col gap-4 rounded-xl p-4 transition-all duration-300 sm:flex-row sm:items-center sm:justify-between ${isUnread ? 'unread' : 'bg-gray-50/80'}`;
   return (
     <div className={cardClasses} onClick={() => isUnread && onMarkAsRead(notification.id)}>
-      <div className="flex items-center space-x-4">
-        <div className={`${notification.iconBg} p-2 rounded-full`}>{notification.icon}</div>
-        <div>
+      <div className="flex min-w-0 items-start gap-4">
+        <div className={`${notification.iconBg} shrink-0 rounded-full p-2`}>{notification.icon}</div>
+        <div className="min-w-0">
           <p className="font-semibold text-gray-800">
             {notification.type}
             <span className="text-sm font-normal text-gray-500 ml-2">{notification.time}</span>
           </p>
-          <p className="text-gray-600">{notification.summary}</p>
+          <p className="mt-1 break-words text-gray-600">{notification.summary}</p>
         </div>
       </div>
-      <button onClick={(e) => { e.stopPropagation(); onViewDetails(notification.title, notification.details); }} className="view-details-btn bg-green-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-700 transition-colors duration-200">
+      <button onClick={(e) => { e.stopPropagation(); onViewDetails(notification.title, notification.details); }} className="view-details-btn w-full shrink-0 rounded-lg bg-green-600 px-4 py-2 font-semibold text-white transition-colors duration-200 hover:bg-green-700 sm:w-auto">
         View Details
       </button>
     </div>
@@ -315,37 +343,37 @@ const Footer = () => (
     <footer className="site-footer">
         <div className="footer-container">
             <div className="footer-about">
-                <h3>BHOOMI SENSE</h3>
+        <h3>BHOOMI SENSE</h3>
                 <p>Empowering Indian farmers by connecting them with modern technology. We work towards better yields, accurate information, and a prosperous future.</p>
             </div>
             <div className="footer-links">
                 <h4>Quick Links</h4>
                 <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">Services</a></li>
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="#">Blog</a></li>
-                    <li><a href="#">Contact</a></li>
+          <li><a href="#"><FiArrowRight size={14} aria-hidden="true" />Home</a></li>
+          <li><a href="#"><FiArrowRight size={14} aria-hidden="true" />Services</a></li>
+          <li><a href="#"><FiArrowRight size={14} aria-hidden="true" />About Us</a></li>
+          <li><a href="#"><FiArrowRight size={14} aria-hidden="true" />Blog</a></li>
+          <li><a href="#"><FiArrowRight size={14} aria-hidden="true" />Contact</a></li>
                 </ul>
             </div>
             <div className="footer-contact">
                 <h4>Contact Us</h4>
-                <p><i className="fas fa-map-marker-alt"></i> Krishi Bhavan, New Delhi, India</p>
-                <p><i className="fas fa-phone"></i> +91 98765 43210</p>
-                <p><i className="fas fa-envelope"></i> contact@krishipragati.in</p>
+        <p><FiMapPin size={17} aria-hidden="true" />Krishi Bhavan, New Delhi, India</p>
+        <p><FiPhone size={17} aria-hidden="true" />+91 98765 43210</p>
+        <p><FiMail size={17} aria-hidden="true" />contact@bhoomisense.in</p>
             </div>
             <div className="footer-subscribe">
                 <h4>Join Our Newsletter</h4>
                 <p style={{opacity:0.8, marginBottom: '20px'}}>Get the latest insights on agriculture.</p>
-                <form className="newsletter-form">
-                    <input type="email" placeholder="Your email address" required />
-                    <button type="submit">Subscribe</button>
+        <form className="newsletter-form" onSubmit={(event) => event.preventDefault()}>
+          <input type="email" placeholder="Your email address" aria-label="Email address" required />
+          <button type="submit">Subscribe</button>
                 </form>
                 <div className="social-icons">
-                    <a href="#" aria-label="Facebook"><i className="fab fa-facebook-f"></i></a>
-                    <a href="#" aria-label="Twitter"><i className="fab fa-twitter"></i></a>
-                    <a href="#" aria-label="Instagram"><i className="fab fa-instagram"></i></a>
-                    <a href="#" aria-label="YouTube"><i className="fab fa-youtube"></i></a>
+          <a href="#" aria-label="Facebook"><FiFacebook size={17} /></a>
+          <a href="#" aria-label="Twitter"><FiTwitter size={17} /></a>
+          <a href="#" aria-label="Instagram"><FiInstagram size={17} /></a>
+          <a href="#" aria-label="YouTube"><FiYoutube size={17} /></a>
                 </div>
             </div>
         </div>

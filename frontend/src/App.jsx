@@ -1,4 +1,5 @@
 
+import Chatbot from "./components/Chatbot";
 import { useState, useEffect } from "react";
 import GlobalStyles from "./components/GlobalStyles";
 import Hero from "./components/Hero";
@@ -203,6 +204,7 @@ function App() {
                 t={t}
             />
             <main className="p-4 md:p-8 max-w-7xl mx-auto w-full">{renderPage()}</main>
+            <Chatbot />
         </div>
     );
 }
