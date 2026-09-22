@@ -33,9 +33,9 @@ function Chatbot() {
 
     try {
       const API_BASE_URL =
-          import.meta.env.VITE_API_URL || "http://127.0.0.1:5000";
+        import.meta.env.VITE_API_URL || "http://127.0.0.1:5000";
 
-        fetch(`${API_BASE_URL}/api/chat`, {
+      const response = await fetch(`${API_BASE_URL}/api/chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -48,7 +48,11 @@ function Chatbot() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Something went wrong");
+        throw new Error(data?.error || "Something went wrong");
+      }
+
+      if (!data?.response) {
+        throw new Error("No chatbot response received");
       }
 
       setMessages((prev) => [
@@ -66,7 +70,7 @@ function Chatbot() {
         {
           role: "assistant",
           content:
-            "Sorry, I couldn't connect to the AI service. Please make sure the BhoomiSense backend is running.",
+            "Sorry, I couldn't connect to the AI service. Please try again.",
         },
       ]);
     } finally {
@@ -99,6 +103,7 @@ function Chatbot() {
           <div style={styles.header}>
             <div>
               <div style={styles.title}>BhoomiSense AI</div>
+
               <div style={styles.status}>
                 <span style={styles.statusDot}></span>
                 Agriculture Assistant
@@ -108,6 +113,7 @@ function Chatbot() {
             <button
               onClick={() => setIsOpen(false)}
               style={styles.closeButton}
+              aria-label="Close chatbot"
             >
               ✕
             </button>
@@ -171,6 +177,7 @@ function Chatbot() {
                 ...styles.sendButton,
                 opacity: loading || !message.trim() ? 0.5 : 1,
               }}
+              aria-label="Send message"
             >
               ➤
             </button>
