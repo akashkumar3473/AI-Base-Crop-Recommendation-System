@@ -604,10 +604,9 @@ The goal of **BhoomiSense** is to combine **Artificial Intelligence, Machine Lea
 
 ## 👨‍💻 Developer
 
-**Sudhakar Sharma**
+**Akash Kumar**
 
-B.Tech — Electronics & Communication Engineering
-Specialization: Artificial Intelligence & Machine Learning
+B.Tech — Computer Science and Engineering
 
 ### Areas of Interest
 
